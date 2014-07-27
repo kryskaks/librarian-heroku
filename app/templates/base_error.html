@@ -1,0 +1,36 @@
+<html>
+      <head>
+        <title>{% block title %}Librarian{% endblock %}
+        </title>
+        {% block css %}
+                        
+        <style>
+      body {
+        padding: 40px;        
+      }
+      input[type="text"], input[type="password"], select{
+        width: 300px;
+        padding: 0px;
+        margin-bottom: 5px;
+        margin-top: 5px;        
+        display: inline-block;        
+      }
+      
+    </style>    
+    <link rel="stylesheet" href="/static/css/bootstrap.css"> 
+
+        {% endblock %}
+        {% block script %}
+        <script src="/static/js/jquery.js"></script>        
+        {% endblock %}
+      </head>
+      <body>
+        <div id="header" class="lead">{% block header %}{% endblock %}</div>
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="footer">
+            {% block footer %}
+                <br>
+                <a href="{{url_for('index')}}">Начать с начала</a>
+            {% endblock %}</div>
+      </body>
+</html>

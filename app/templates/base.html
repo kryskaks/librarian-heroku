@@ -1,0 +1,116 @@
+<html>
+      <head>
+        <title>{% block title %}Librarian{% endblock %}
+        </title>
+        {% block css %}
+                        
+        <style>
+      body {
+        padding: 40px;        
+      }
+      input[type="text"], input[type="password"], select{
+        width: 300px;
+        padding: 0px;
+        margin-bottom: 5px;
+        margin-top: 5px;        
+        display: inline-block;
+        padding-left: 5px;        
+      }
+      
+    </style>    
+    <link rel="stylesheet" href="/static/css/bootstrap.css"> 
+
+        {% endblock %}
+        {% block script %}
+        <script src="/static/js/jquery.js"></script>
+
+        <script type="text/javascript">
+
+        $(document).ready(function(){
+          $('.form').submit(function(event){
+            validateForm(event);
+          });
+
+          $("[id=require_confirm]").click(function(event){            
+            if (confirm('Уверены, что хотите удалить?')) {
+              return;
+            }
+            else {              
+              event.preventDefault();              
+            }
+          });
+
+          function validateForm(event){
+            var target = $(event.target);           
+
+            target.find('.alert-warning').each(function(){
+              $(this).hide();
+            });
+
+            var formTextFields = target.find(".text");
+            var byTitleField = target.find('#by_title');
+            var byAuthorField = target.find('#by_author');
+
+            
+            var warning = false;
+            formTextFields.each(function(){
+              if($(this).val() == ""){              
+                $(this).after('<span class="alert alert-warning">Поле должно быть заполнено</span>');
+                warning = true;                                
+              }
+            });            
+            
+            if(byTitleField.length) {              
+              if(!(byAuthorField.prop('checked') || byTitleField.prop('checked'))) {
+                byAuthorField.before('<span class="alert alert-warning">Укажите хотя бы один критерий поиска</span><br class="alert alert-warning">');
+                warning = true;              
+              }
+            }
+
+            if(warning){
+              event.preventDefault();
+              return;            
+            }
+
+          }
+
+        });
+
+        </script>
+
+        {% endblock %}
+      </head>
+      <body>
+        <div class="row">                            
+          <div id="header" class="lead col-md-6"><a href="{{url_for('index')}}">Librarian:</a>{% block header %}{% endblock %}</div>
+          <div id="login" class="col-md-6">
+            {% if "user" in session %}            
+            <a href="{{url_for('index')}}"><button type="button" class="btn btn-default btn-sm">{{session.get("user")}}</button></a>
+            <a href="{{url_for('logout')}}"><button type="button" class="btn btn-primary btn-sm">Logout</button></a>          
+            {% else %}
+            <p><a href="{{url_for('login')}}"><button type="button" class="btn btn-primary btn-sm">Login</button></a>
+            <a href="{{url_for('register')}}"><button type="button" class="btn btn-primary btn-sm">Register</button></a></p>
+            {% endif %}
+          </div>        
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="list-unstyled">
+            {% for message in messages %}
+              <li><span class="alert alert-info">{{ message|safe }}</span></li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}      
+        
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="footer">
+            {% block footer %}
+                <br>
+                <a href="{{url_for('index')}}">Главная</a> |
+                <a href="{{url_for('authors_list')}}">Все авторы</a> |
+                <a href="{{url_for('books_list')}}">Все книги</a>
+            {% endblock %}</div>
+      </body>
+</html>
